@@ -8,3 +8,141 @@
 
 
 4. 保存機能（createアクション）を実装する手順
+1. アプリケーションの新規作成手順
+目的: 新しいRailsアプリケーションを作成し、データを保存するためのデータベースを準備します。​
+
+手順:
+
+Railsアプリケーションの新規作成
+
+パソコンのターミナル（コマンドを入力する画面）を開きます。​
+
+以下のコマンドを入力して、新しいアプリケーションを作成します。​
+
+cpp
+コピーする
+rails new アプリ名
+例えば、アプリ名をFirstAppとする場合：
+
+cpp
+コピーする
+rails new FirstApp
+このコマンドを実行すると、FirstAppという名前のフォルダが作成され、その中に必要なファイルやフォルダが自動的に用意されます。
+
+データベースの作成
+
+ターミナルで、先ほど作成したアプリケーションのフォルダに移動します。​
+
+bash
+コピーする
+cd FirstApp
+以下のコマンドを入力して、データベースを作成します。​
+
+lua
+コピーする
+rails db:create
+これにより、データを保存・管理するためのデータベースが作成されます。
+
+2. 一覧機能（indexアクション）を実装する手順
+目的: 保存されたデータの一覧を表示する機能を作成します。​
+
+手順:
+
+モデルの作成
+
+ターミナルで以下のコマンドを入力し、データの構造を定義する「モデル」を作成します。​
+
+vbnet
+コピーする
+rails generate model Post title:string content:text
+これにより、タイトル（title）と内容（content）を持つ投稿（Post）というデータの型が作成されます。
+
+データベースへの反映
+
+以下のコマンドを入力して、作成したモデルの情報をデータベースに反映させます。​
+
+nginx
+コピーする
+rails db:migrate
+これで、データベースに「posts」という名前のテーブルが作成され、投稿を保存できるようになります。
+
+コントローラーの作成
+
+以下のコマンドを入力して、投稿を操作するための「コントローラー」を作成します。​
+
+nginx
+コピーする
+rails generate controller Posts
+ルーティングの設定
+
+アプリケーションのconfig/routes.rbファイルを開き、以下の1行を追加します。​
+
+ruby
+コピーする
+resources :posts
+これにより、投稿に関するURL（例えば、一覧表示や詳細表示など）が自動的に設定されます。
+
+indexアクションの定義
+
+app/controllers/posts_controller.rbファイルを開き、以下のコードを追加します。​
+
+ruby
+コピーする
+def index
+  @posts = Post.all
+end
+これで、すべての投稿を取得して@postsという変数に入れる処理が定義されます。
+
+ビューの作成
+
+app/views/postsフォルダ内にindex.html.erbというファイルを作成し、以下のコードを記述します。​
+
+erb
+コピーする
+<h1>投稿一覧</h1>
+
+<% @posts.each do |post| %>
+  <div>
+    <h2><%= post.title %></h2>
+    <p><%= post.content %></p>
+  </div>
+<% end %>
+これにより、すべての投稿のタイトルと内容が一覧表示されます。
+
+3. 投稿画面（newアクション）を作成する手順
+目的: 新しい投稿を作成するための画面を用意します。​
+
+手順:
+
+newアクションの定義
+
+app/controllers/posts_controller.rbファイルを開き、以下のコードを追加します。​
+
+ruby
+コピーする
+def new
+  @post = Post.new
+end
+これで、新しい投稿を作成するための準備が整います。
+
+ビューの作成
+
+app/views/postsフォルダ内にnew.html.erbというファイルを作成し、以下のコードを記述します。​
+
+erb
+コピーする
+<h1>新しい投稿</h1>
+
+<%= form_with model: @post, local: true do |form| %>
+  <div>
+    <%= form.label :title, "タイトル" %>
+    <%= form.text_field :title %>
+  </div>
+  <div>
+    <%= form.label :content, "内容" %>
+    <%= form.text_area :content %>
+  </div>
+  <div>
+    <%= form.submit "投稿する" %>
+  </div>
+<% end %>
